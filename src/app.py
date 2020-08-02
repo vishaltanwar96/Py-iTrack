@@ -6,10 +6,13 @@ from flask_cors import CORS
 
 from routes import url_prefix_blueprint
 from utils.database import db, ma
+from models import (
+    project_owner_table, Task, User, Project, Role, Status, Criticality
+)
 
 
 class Application(object):
-    """."""
+    """Application Factory Class"""
 
     INSTANCE = None
     BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
