@@ -1,1 +1,1 @@
-from .database import db, ma
+from .misc_instances import db, ma
