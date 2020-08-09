@@ -5,7 +5,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from routes import url_prefix_blueprint
-from utils.database import db, ma, migrate
+from utils.misc_instances import db, ma, migrate
 from models import (
     project_owner_table, Task, User, Project, Role, Status, Criticality
 )
