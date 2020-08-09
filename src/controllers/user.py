@@ -11,7 +11,7 @@ class UserController(views.MethodView):
     def post(self, *args, **kwargs):
         """Creates a User (User Registration)"""
 
-        if request.is_json():
+        if request.is_json:
             serializer = UserRegistrationSerializer()
             try:
                 user = serializer.load(**request.get_json())
