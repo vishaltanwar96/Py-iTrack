@@ -14,7 +14,7 @@ class UserController(views.MethodView):
         if request.is_json:
             serializer = UserRegistrationSerializer()
             try:
-                user = serializer.load(**request.get_json())
+                user = serializer.load(request.get_json())
                 db.session.add(user)
                 db.session.commit()
                 return jsonify({'status': True, 'msg': 'Registration Successful'}), 200
