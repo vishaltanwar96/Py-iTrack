@@ -14,8 +14,14 @@ class UserRegistrationSerializer(Schema):
         required=True,
         load_only=True,
         validate=[
-            validate.Length(min=8, max=300),
-            validate.OneOf(choices=" !\"#$%&'()*+,-./:;<=>?@[\\^]_`{|}~")
+            validate.Length(min=8, max=40),
+            validate.Regexp(
+                r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+                error="""
+                    Minimum eight characters, at least one uppercase letter, 
+                    one lowercase letter, one number and one special character
+                """
+            )
         ]
     )
     role_id = fields.Int(required=True, validate=[validate.Range(min=0, max=1, max_inclusive=True, min_inclusive=True)])
