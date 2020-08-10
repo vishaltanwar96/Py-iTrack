@@ -1,4 +1,4 @@
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import Schema, post_load, fields, validate
 
 from models.user import User
@@ -32,3 +32,24 @@ class UserRegistrationSerializer(Schema):
 
         data['password'] = generate_password_hash(password=data.pop('password'))
         return User(**data)
+
+
+class UserLoginSerializer(Schema):
+    """Login Validation and De-serialization"""
+
+    email = fields.Email(required=True, validate=validate.Email())
+    password = fields.Str(required=True, validate=validate.Length(min=1))
+
+    @post_load
+    def check_user(self, data, *args, **kwargs):
+        """Check user existence"""
+
+        email = data.get('email')
+        password = data.get('password')
+
+        if email and password:
+            user = User.query.filter_by(email=email).first()
+            if check_password_hash(user.password, password):
+                return True
+            return False
+        return False
