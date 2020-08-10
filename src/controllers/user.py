@@ -17,8 +17,19 @@ class UserController(views.MethodView):
                 user = serializer.load(request.get_json())
                 db.session.add(user)
                 db.session.commit()
-                return jsonify({'status': True, 'msg': 'Registration Successful'}), 200
+                return jsonify({'status': True, 'msg': 'Registration Successful'}), 201
             except ValidationError as err:
                 db.session.rollback()
                 return jsonify({'status': False, 'msg': err.messages}), 400
         return jsonify({'status': False, 'msg': 'Invalid JSON'}), 400
+
+
+class UserLoginController(views.MethodView):
+    """User Login"""
+
+    decorators = ()
+
+    def post(self, *args, **kwargs):
+        """Handle User Login"""
+
+        pass
