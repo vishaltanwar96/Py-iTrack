@@ -5,7 +5,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from routes import url_prefix_blueprint
-from utils.misc_instances import db, ma, migrate
+from utils.misc_instances import db, ma, migrate, jwt
 from models import (
     project_owner_table, Task, User, Project, Role, Status, Criticality
 )
@@ -38,6 +38,7 @@ class Application(object):
         db.init_app(self.app)
         ma.init_app(self.app)
         migrate.init_app(self.app, db)
+        jwt.init_app(self.app)
 
         CORS(self.app)
 
