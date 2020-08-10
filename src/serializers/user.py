@@ -49,7 +49,7 @@ class UserLoginSerializer(Schema):
 
         if email and password:
             user = User.query.filter_by(email=email).first()
-            if check_password_hash(user.password, password):
-                return True
-            return False
-        return False
+            if user:
+                if check_password_hash(user.password, password):
+                    return user.id
+        return None
