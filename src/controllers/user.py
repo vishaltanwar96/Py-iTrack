@@ -2,8 +2,11 @@ from flask import views, request, jsonify
 from marshmallow import ValidationError
 from flask_jwt_extended import create_access_token
 
+from models.user import User
 from utils.misc_instances import db
-from serializers.user import UserRegistrationSerializer, UserLoginSerializer
+from serializers.user import (
+    UserRegistrationSerializer, UserLoginSerializer, UserSerializer
+)
 
 
 class UserController(views.MethodView):
@@ -23,6 +26,24 @@ class UserController(views.MethodView):
                 db.session.rollback()
                 return jsonify({'status': False, 'msg': err.messages}), 400
         return jsonify({'status': False, 'msg': 'Invalid JSON'}), 400
+
+    def get(self, user_id=None, *args, **kwargs):
+        """Get a User or a List of Users"""
+
+        if not user_id:
+            users = User.query.all()
+            serializer = UserSerializer(many=True)
+            return jsonify({'status': False, 'msg': 'Fetched data successfully', 'data': serializer.dump(users)}), 200
+        user = User.query.filter_by(id=user_id).first()
+        if not user:
+            return jsonify({'status': False, 'msg': 'User doesn\'t exist'}), 404
+        serializer = UserSerializer()
+        return jsonify({'status': False, 'msg': 'Fetched data successfully', 'data': serializer.dump(user)}), 200
+
+    def put(self, user_id, *args, **kwargs):
+        """Change User Information"""
+
+        pass
 
 
 class UserLoginController(views.MethodView):
