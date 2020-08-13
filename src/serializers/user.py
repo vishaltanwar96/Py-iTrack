@@ -2,6 +2,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import Schema, post_load, fields, validate
 
 from models.user import User
+from utils.misc_instances import ma
 
 
 class UserRegistrationSerializer(Schema):
@@ -53,3 +54,14 @@ class UserLoginSerializer(Schema):
                 if check_password_hash(user.password, password):
                     return user.id
         return None
+
+
+class UserSerializer(ma.SQLAlchemyAutoSchema):
+    """Serializer for User Dumps"""
+
+    password = fields.Str(load_only=True)
+
+    class Meta:
+        """."""
+        model = User
+        include_fk = True
