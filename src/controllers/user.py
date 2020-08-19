@@ -1,11 +1,15 @@
 from flask import views, request, jsonify
+from sqlalchemy import update
 from marshmallow import ValidationError
 from flask_jwt_extended import create_access_token
 
 from models.user import User
 from utils.misc_instances import db
 from serializers.user import (
-    UserRegistrationSerializer, UserLoginSerializer, UserSerializer
+    UserRegistrationSerializer,
+    UserLoginSerializer,
+    UserSerializer,
+    UserChangeDetailsSerializer,
 )
 
 
@@ -23,8 +27,7 @@ class UserController(views.MethodView):
                 db.session.commit()
                 return jsonify({'status': True, 'msg': 'Registration Successful'}), 201
             except ValidationError as err:
-                db.session.rollback()
-                return jsonify({'status': False, 'msg': err.messages}), 400
+                return jsonify({'status': False, 'msg': 'Field validations failed', 'errors': err.messages}), 400
         return jsonify({'status': False, 'msg': 'Invalid JSON'}), 400
 
     def get(self, user_id=None, *args, **kwargs):
@@ -43,7 +46,20 @@ class UserController(views.MethodView):
     def put(self, user_id, *args, **kwargs):
         """Change User Information"""
 
-        pass
+        if not user_id:
+            return jsonify({'status': False, 'msg': 'No user id specified'}), 400
+        user = User.query.filter_by(id=user_id)
+        if not user:
+            return jsonify({'status': False, 'msg': 'User doesn\'t exist'}), 404
+        if request.is_json:
+            serializer = UserChangeDetailsSerializer()
+            try:
+                update_data = serializer.load(request.get_json())
+                user.update(update_data)
+                db.session.commit()
+                return jsonify({'status': True, 'msg': 'Details saved successfully'}), 200
+            except ValidationError as err:
+                return jsonify({'status': False, 'msg': 'Field validations Failed', 'errors': err.messages}), 400
 
 
 class UserLoginController(views.MethodView):
