@@ -1,5 +1,4 @@
 from flask import views, request, jsonify
-from sqlalchemy import update
 from marshmallow import ValidationError
 from flask_jwt_extended import create_access_token
 
@@ -21,6 +20,7 @@ class UserController(views.MethodView):
 
         if request.is_json:
             serializer = UserRegistrationSerializer()
+
             try:
                 if User.query.filter_by(email=request.get_json()['email']):
                     return jsonify({'status': False, 'msg': 'User already exists'}), 400
@@ -39,9 +39,12 @@ class UserController(views.MethodView):
             users = User.query.all()
             serializer = UserSerializer(many=True)
             return jsonify({'status': False, 'msg': 'Fetched data successfully', 'data': serializer.dump(users)}), 200
+
         user = User.query.filter_by(id=user_id).first()
+
         if not user:
             return jsonify({'status': False, 'msg': 'User doesn\'t exist'}), 404
+
         serializer = UserSerializer()
         return jsonify({'status': False, 'msg': 'Fetched data successfully', 'data': serializer.dump(user)}), 200
 
@@ -50,9 +53,12 @@ class UserController(views.MethodView):
 
         if not user_id:
             return jsonify({'status': False, 'msg': 'No user id specified'}), 400
+
         user = User.query.filter_by(id=user_id)
+
         if not user:
             return jsonify({'status': False, 'msg': 'User doesn\'t exist'}), 404
+
         if request.is_json:
             serializer = UserChangeDetailsSerializer()
             try:
@@ -72,6 +78,7 @@ class UserLoginController(views.MethodView):
 
         if request.is_json:
             serializer = UserLoginSerializer()
+
             try:
                 user_id = serializer.load(request.get_json())
                 if user_id:
