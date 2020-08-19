@@ -22,6 +22,8 @@ class UserController(views.MethodView):
         if request.is_json:
             serializer = UserRegistrationSerializer()
             try:
+                if User.query.filter_by(email=request.get_json()['email']):
+                    return jsonify({'status': False, 'msg': 'User already exists'}), 400
                 user = serializer.load(request.get_json())
                 db.session.add(user)
                 db.session.commit()
