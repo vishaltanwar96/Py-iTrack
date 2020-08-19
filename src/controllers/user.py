@@ -1,6 +1,6 @@
 from flask import views, request, jsonify
 from marshmallow import ValidationError
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 from models.user import User
 from utils.misc_instances import db
@@ -32,6 +32,7 @@ class UserController(views.MethodView):
                 return jsonify({'status': False, 'msg': 'Field validations failed', 'errors': err.messages}), 400
         return jsonify({'status': False, 'msg': 'Invalid JSON'}), 400
 
+    @jwt_required
     def get(self, user_id=None, *args, **kwargs):
         """Get a User or a List of Users"""
 
@@ -48,8 +49,11 @@ class UserController(views.MethodView):
         serializer = UserSerializer()
         return jsonify({'status': False, 'msg': 'Fetched data successfully', 'data': serializer.dump(user)}), 200
 
-    def put(self, user_id, *args, **kwargs):
+    @jwt_required
+    def put(self, *args, **kwargs):
         """Change User Information"""
+
+        user_id = get_jwt_identity()
 
         if not user_id:
             return jsonify({'status': False, 'msg': 'No user id specified'}), 400
