@@ -17,3 +17,8 @@ class Status(db.Model, IdValueMixin):
 class Criticality(db.Model, IdValueMixin):
 
     __tablename__ = 'criticality'
+
+
+class Permission(db.Model, IdValueMixin):
+
+    __tablename__ = 'permission'
