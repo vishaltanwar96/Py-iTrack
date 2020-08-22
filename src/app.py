@@ -30,7 +30,8 @@ class Application(object):
             ENV=config.get('DEFAULT', 'ENV'),
             SQLALCHEMY_DATABASE_URI=config.get('DEFAULT', 'SQLALCHEMY_DATABASE_URI'),
             SQLALCHEMY_TRACK_MODIFICATIONS=config.getboolean('DEFAULT', 'SQLALCHEMY_TRACK_MODIFICATIONS'),
-            SECRET_KEY=config.get('DEFAULT', 'SECRET_KEY')
+            SECRET_KEY=config.get('DEFAULT', 'SECRET_KEY'),
+            JWT_ACCESS_TOKEN_EXPIRES=config.getint('DEFAULT', 'JWT_ACCESS_TOKEN_EXPIRES')
         )
         db.init_app(self.app)
         ma.init_app(self.app)
