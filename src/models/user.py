@@ -13,4 +13,5 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', backref='users')
-    owners = db.relationship('Project', secondary="project_owner", backref="projects")
+    projects = db.relationship('Project', secondary="project_owner", backref="owners")
+    permissions = db.relationship('Permission', secondary='user_permission', backref='users')
