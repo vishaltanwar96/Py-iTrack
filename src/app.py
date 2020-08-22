@@ -6,9 +6,6 @@ from flask_cors import CORS
 
 from routes import url_prefix_blueprint
 from utils.misc_instances import db, ma, migrate, jwt
-from models import (
-    project_owner_table, Task, User, Project, Role, Status, Criticality
-)
 
 
 class Application(object):
