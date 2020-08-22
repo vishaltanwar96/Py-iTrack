@@ -39,9 +39,6 @@ class Application(object):
 
         CORS(self.app)
 
-        with self.app.app_context():
-            db.create_all()
-
         for url_prefix, blueprint in url_prefix_blueprint.items():
             self.app.register_blueprint(blueprint, url_prefix=url_prefix)
 
