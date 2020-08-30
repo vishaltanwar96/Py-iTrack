@@ -13,4 +13,4 @@ class Organisation(db.Model):
     location = db.Column(db.String, nullable=False)
     registered_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
     registered_by = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref='organisation', uselist=False)
+    registered_by_user = db.relationship('User', backref='org_reg_by', uselist=False)
