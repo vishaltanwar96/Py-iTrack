@@ -1,8 +1,8 @@
 # Py-iTrack
-A Simple Task Tracker Backend using Flask ReST APIs.
+A Simple Task Tracker Backend using ReST APIs written in Flask.
 
 ## Database-Schema
-![iTrack-Schema](https://i.imgur.com/h4ec8iz.png)
+![iTrack-Schema](./miscellaneous_stuff/iTrackER.jpg)
 
 ## Project Structure
 ```bash
