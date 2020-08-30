@@ -12,6 +12,8 @@ class Project(db.Model):
     description = db.Column(db.Text, nullable=True, server_default=null())
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
     created_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+    organisation_id = db.Column(db.Integer, db.ForeignKey('organisation.id'))
+    organisation = db.relationship('Organisation', backref='projects')
 
 
 class ProjectMetrics(db.Model):
