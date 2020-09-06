@@ -13,9 +13,11 @@ A Simple Task Tracker Backend using ReST APIs written in Flask.
 ├── resources
 │   ├── development.ini
 │   └── production.ini
-├── sqlite3.db
 └── src
     ├── app.py
+    ├── commands
+    │   ├── __init__.py
+    │   └── tables.py
     ├── controllers
     │   ├── __init__.py
     │   └── user.py
@@ -24,6 +26,7 @@ A Simple Task Tracker Backend using ReST APIs written in Flask.
     │   ├── association.py
     │   ├── __init__.py
     │   ├── mixins.py
+    │   ├── organisation.py
     │   ├── project.py
     │   ├── static.py
     │   ├── task.py
@@ -37,4 +40,5 @@ A Simple Task Tracker Backend using ReST APIs written in Flask.
     └── utils
         ├── __init__.py
         └── misc_instances.py
+
 ```
