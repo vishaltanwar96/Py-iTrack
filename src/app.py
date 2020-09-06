@@ -5,6 +5,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from routes import url_prefix_blueprint
+from commands import blueprint_cli_group_mapping
 from utils.misc_instances import db, ma, migrate, jwt
 
 
@@ -15,10 +16,10 @@ class Application(object):
     BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     ENV_FILE: str = os.environ.get('ENV', 'development')
 
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         """."""
 
-        config: ConfigParser = ConfigParser()
+        config = ConfigParser()
         config.read(os.path.join(self.BASE_DIR, 'resources', f'{self.ENV_FILE.lower()}.ini'))
 
         self.app: Flask = Flask(name)
@@ -39,12 +40,15 @@ class Application(object):
         jwt.init_app(self.app)
 
         CORS(self.app)
+        self.register_blueprints(url_prefix_blueprint)
+        self.register_blueprints(blueprint_cli_group_mapping)
 
-        for url_prefix, blueprint in url_prefix_blueprint.items():
+    def register_blueprints(self, blueprint_prefix_dict: dict) -> None:
+        for url_prefix, blueprint in blueprint_prefix_dict.items():
             self.app.register_blueprint(blueprint, url_prefix=url_prefix)
 
     @classmethod
-    def get_instance(cls, name) -> Flask:
+    def get_instance(cls, name: str) -> Flask:
         """."""
 
         if not cls.INSTANCE:
