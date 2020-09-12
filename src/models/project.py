@@ -26,10 +26,9 @@ class ProjectMetrics(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     project = db.relationship('Project', backref='metric', uselist=False)
-    pending_tasks = db.Column(db.Integer, nullable=False, server_default=text('0'))
-    completed_tasks = db.Column(db.Integer, nullable=False, server_default=text('0'))
-    on_hold_tasks = db.Column(db.Integer, nullable=False, server_default=text('0'))
-    total_tasks = db.Column(db.Integer, nullable=False, server_default=text('0'))
+    status_id = db.Column(db.Integer, db.ForeignKey('status.id'), nullable=False)
+    status = db.relationship('Status', backref='metrics')
+    count = db.Column(db.Integer, nullable=False, server_default=text('0'))
 
 
 class ProjectRemarksHistory(db.Model):
