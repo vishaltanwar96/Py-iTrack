@@ -15,5 +15,5 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     is_verified = db.Column(db.Boolean, server_default=text('0'))
     created_at = db.Column(db.DateTime, server_default=func.now())
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     role = db.relationship('Role', backref='users')
