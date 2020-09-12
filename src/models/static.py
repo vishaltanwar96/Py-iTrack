@@ -23,18 +23,8 @@ class Criticality(db.Model, IdValueMixin):
     initial_values = ('LOW', 'MEDIUM', 'HIGH', 'SEVERE')
 
 
-class Permission(db.Model, IdValueMixin):
-
-    __tablename__ = 'permission'
-
-    intial_values = (
-        'CREATE ORGANISATION',
-        'CREATE PROJECT',
-        'CHANGE PROJECT STATUS',
-    )
-
 # Static Models using Metaclasses
-# models = ('role', 'status', 'criticality', 'permission')
+# models = ('role', 'status', 'criticality')
 #
 # for model in models:
 #     capitalized_model = model.capitalize()
