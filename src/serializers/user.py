@@ -35,7 +35,7 @@ class UserRegistrationSerializer(Schema):
         ]
     )
     role_id = fields.Int(
-        required=False, validate=[validate.Range(min=0, max=1, max_inclusive=True, min_inclusive=True)]
+        required=True, validate=[validate.Range(min=0, max=1, max_inclusive=True, min_inclusive=True)]
     )
 
     @post_load
