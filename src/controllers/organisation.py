@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from utils import db
 from utils.helpers import get_super_users
-from models import Organisation, User
+from models import Organisation, User, user_organisation_table
 from serializers.organisation import (
     OrganisationSerializer,
     OrganisationRegistrationSerializer
@@ -49,6 +49,12 @@ class OrganisationController(views.MethodView):
             if current_user.role_id not in get_super_users():
                 return jsonify({'status': False, 'msg': 'Action not permissible', 'data': None}), 403
 
+            if db.session.query(user_organisation_table).\
+                    filter(user_organisation_table.c.user_id == current_user_id).first():
+                return jsonify(
+                    {'status': False, 'msg': 'A user can be associated with only one organisation', 'data': None}
+                ), 400
+
             request_data = request.get_json()
 
             if Organisation.query.filter_by(name=request_data.get('name')).first():
@@ -63,6 +69,7 @@ class OrganisationController(views.MethodView):
                 )
                 validated_request_data['registered_by'] = current_user_id
                 organisation = Organisation(**validated_request_data)
+                organisation.user_organisation.append(current_user)
                 db.session.add(organisation)
                 db.session.commit()
                 return jsonify(
