@@ -3,18 +3,40 @@ from marshmallow import Schema, post_load, fields, validate
 
 from models.user import User
 from utils.misc_instances import ma
+from utils.serializer import CamelCaseSchema
 
 
 # Todo: Find a way to change the attributes of a field initialized in parent class(DRY CODE).
-class UserChangeDetailsSerializer(Schema):
+class UserChangeDetailsSerializer(CamelCaseSchema):
     """Serializer to Change User Details"""
 
     first_name = fields.Str(required=False, validate=[validate.Length(min=1, max=50)])
     last_name = fields.Str(required=False, validate=[validate.Length(min=1, max=50)])
     email = fields.Email(required=False, validate=[validate.Email()])
+    password = fields.Str(
+        required=False,
+        validate=[
+            validate.Length(min=8, max=40),
+            validate.Regexp(
+                r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+                error="""
+                        Minimum eight characters, at least one uppercase letter, 
+                        one lowercase letter, one number and one special character
+                    """
+            )
+        ]
+    )
+
+    @post_load
+    def hash_password(self, data, *args, **kwargs):
+        """If PUT request has password changes plain text password to hashed password"""
+
+        if 'password' in data.keys():
+            data['password'] = generate_password_hash(password=data.pop('password'))
+        return data
 
 
-class UserRegistrationSerializer(Schema):
+class UserRegistrationSerializer(CamelCaseSchema):
     """Validation And De-serialization For User Registration"""
 
     first_name = fields.Str(required=True, validate=[validate.Length(min=1, max=50)])
@@ -35,7 +57,7 @@ class UserRegistrationSerializer(Schema):
         ]
     )
     role_id = fields.Int(
-        required=True, validate=[validate.Range(min=0, max=1, max_inclusive=True, min_inclusive=True)]
+        required=True, validate=[validate.Range(min=1, max=3, max_inclusive=True, min_inclusive=True)]
     )
 
     @post_load
@@ -46,7 +68,7 @@ class UserRegistrationSerializer(Schema):
         return User(**data)
 
 
-class UserLoginSerializer(Schema):
+class UserLoginSerializer(CamelCaseSchema):
     """Login Validation and De-serialization"""
 
     email = fields.Email(required=True, validate=validate.Email())
@@ -67,7 +89,7 @@ class UserLoginSerializer(Schema):
         return None
 
 
-class UserSerializer(ma.SQLAlchemyAutoSchema):
+class UserSerializer(ma.SQLAlchemyAutoSchema, CamelCaseSchema):
     """Serializer for User Dumps"""
 
     password = fields.Str(load_only=True)
