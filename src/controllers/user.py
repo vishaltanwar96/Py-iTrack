@@ -5,7 +5,7 @@ from marshmallow import ValidationError
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 from models.user import User
-from models.static import Role
+from utils.helpers import get_super_users
 from utils.misc_instances import db
 from serializers.user import (
     UserRegistrationSerializer,
@@ -25,9 +25,10 @@ class UserController(views.MethodView):
             serializer = UserRegistrationSerializer()
             request_data = request.get_json()
 
+            if User.query.filter_by(email=request_data.get('email')).first():
+                return jsonify({'status': False, 'msg': 'User already exists', 'data': None}), 400
+
             try:
-                if User.query.filter_by(email=request_data['email']).first():
-                    return jsonify({'status': False, 'msg': 'User already exists', 'data': None}), 400
                 user = serializer.load(request_data)
                 db.session.add(user)
                 db.session.commit()
@@ -86,10 +87,8 @@ class UserController(views.MethodView):
 
         current_user_id = get_jwt_identity()
         current_user_role_id = User.query.filter_by(id=current_user_id).first().role_id
-        super_users = tuple(
-            map(itemgetter(0), db.session.query(Role.id).filter(Role.value.in_(('ADMIN', 'MANAGER'))).all())
-        )
-        if current_user_id == user_id or current_user_role_id not in super_users:
+
+        if current_user_id == user_id or current_user_role_id not in get_super_users():
             return jsonify({'status': False, 'msg': 'Action not permissible', 'data': None}), 403
 
         user_to_delete = User.query.filter_by(id=user_id).first()
