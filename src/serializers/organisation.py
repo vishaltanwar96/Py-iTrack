@@ -35,3 +35,23 @@ class OrganisationRegistrationSerializer(CamelCaseSchema):
         ]
     )
     location = fields.Str(required=True, validate=[validate.Length(min=1, max=30)])
+
+
+class ChangeOrganisationSerializer(CamelCaseSchema):
+    """Schema for changing organisation information"""
+
+    name = fields.Str(required=False, validate=[validate.Length(min=1, max=70)])
+    passcode = fields.Str(
+        required=False,
+        validate=[
+            validate.Length(min=8, max=40),
+            validate.Regexp(
+                r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+                error="""
+                            Minimum eight characters, at least one uppercase letter, 
+                            one lowercase letter, one number and one special character
+                        """
+            )
+        ]
+    )
+    location = fields.Str(required=False, validate=[validate.Length(min=1, max=30)])
