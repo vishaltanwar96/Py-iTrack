@@ -2,7 +2,9 @@ from operator import itemgetter
 
 from flask import views, request, jsonify
 from marshmallow import ValidationError
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_identity, get_current_user
+)
 
 from models.user import User
 from utils.helpers import get_super_users
@@ -85,13 +87,12 @@ class UserController(views.MethodView):
         if not user_id:
             return jsonify({'status': False, 'msg': 'No user id specified', 'data': None}), 400
 
-        current_user_id = get_jwt_identity()
-        current_user_role_id = User.query.filter_by(id=current_user_id).first().role_id
+        current_user = get_current_user()
 
-        if current_user_id == user_id or current_user_role_id not in get_super_users():
-            return jsonify({'status': False, 'msg': 'Action not permissible', 'data': None}), 403
+        if current_user.id == user_id or current_user.role_id not in get_super_users():
+            return jsonify({'status': False, 'msg': 'Action not permissible', 'data': {'id': user_id}}), 403
 
-        user_to_delete = User.query.filter_by(id=user_id).first()
+        user_to_delete = User.query.get(user_id)
 
         if not user_to_delete:
             return jsonify({'status': False, 'msg': 'Invalid user id, not found', 'data': None}), 404
