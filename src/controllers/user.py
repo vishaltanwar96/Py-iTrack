@@ -88,7 +88,7 @@ class UserController(views.MethodView):
         current_user = get_current_user()
 
         if current_user.id == user_id or current_user.role_id not in get_super_users():
-            return jsonify({'status': False, 'msg': 'Action not permissible', 'data': {'id': user_id}}), 403
+            return jsonify({'status': False, 'msg': 'Action not permissible', 'data': None}), 403
 
         user_to_delete = User.query.get(user_id)
 
@@ -98,7 +98,7 @@ class UserController(views.MethodView):
         db.session.delete(user_to_delete)
         db.session.commit()
 
-        return jsonify({'status': False, 'msg': 'User successfully deleted', 'data': None}), 200
+        return jsonify({'status': False, 'msg': 'User successfully deleted', 'data': {'id': user_id}}), 200
 
 
 class UserLoginController(views.MethodView):
