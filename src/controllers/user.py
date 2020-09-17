@@ -46,7 +46,7 @@ class UserController(views.MethodView):
             serializer = UserSerializer(many=True)
             return jsonify({'status': False, 'msg': 'Fetched data successfully', 'data': serializer.dump(users)}), 200
 
-        user = User.query.filter_by(id=user_id).first()
+        user = User.query.get(user_id)
 
         if not user:
             return jsonify({'status': False, 'msg': 'User doesn\'t exist', 'data': None}), 404
