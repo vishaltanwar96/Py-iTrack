@@ -1,7 +1,7 @@
 from marshmallow import ValidationError
 from flask import views, jsonify, request
 from werkzeug.security import generate_password_hash
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_current_user
 
 from utils import db
 from utils.helpers import get_super_users
@@ -39,9 +39,7 @@ class OrganisationController(views.MethodView):
         """Register an orgsanition"""
 
         if request.is_json:
-            current_user_id = get_jwt_identity()
-
-            current_user = User.query.get(current_user_id)
+            current_user = get_current_user()
 
             if not current_user:
                 return jsonify({'status': False, 'msg': 'User doesn\'t exist', 'data': None}), 404
@@ -50,7 +48,7 @@ class OrganisationController(views.MethodView):
                 return jsonify({'status': False, 'msg': 'Action not permissible', 'data': None}), 403
 
             if db.session.query(user_organisation_table).\
-                    filter(user_organisation_table.c.user_id == current_user_id).first():
+                    filter(user_organisation_table.c.user_id == current_user.id).first():
                 return jsonify(
                     {'status': False, 'msg': 'A user can be associated with only one organisation', 'data': None}
                 ), 400
@@ -67,7 +65,7 @@ class OrganisationController(views.MethodView):
                 validated_request_data['passcode'] = generate_password_hash(
                     password=validated_request_data.pop('passcode')
                 )
-                validated_request_data['registered_by'] = current_user_id
+                validated_request_data['registered_by'] = current_user.id
                 organisation = Organisation(**validated_request_data)
                 organisation.user_organisation.append(current_user)
                 db.session.add(organisation)
