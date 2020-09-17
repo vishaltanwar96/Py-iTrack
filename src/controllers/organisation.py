@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_current_user
 
 from utils import db
 from utils.helpers import get_super_users
-from models import Organisation, User, user_organisation_table
+from models import Organisation, user_organisation_table
 from serializers.organisation import (
     OrganisationSerializer,
     OrganisationRegistrationSerializer,
