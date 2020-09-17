@@ -1,5 +1,3 @@
-from operator import itemgetter
-
 from flask import views, request, jsonify
 from marshmallow import ValidationError
 from flask_jwt_extended import (
