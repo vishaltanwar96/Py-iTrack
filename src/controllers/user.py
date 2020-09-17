@@ -64,14 +64,18 @@ class UserController(views.MethodView):
             if not user.first():
                 return jsonify({'status': False, 'msg': 'User doesn\'t exist', 'data': None}), 404
 
-            serializer = UserChangeDetailsSerializer()
             try:
                 request_data = request.get_json()
+                serializer = UserChangeDetailsSerializer()
                 update_data = serializer.load(request_data)
                 user.update(update_data)
                 db.session.commit()
                 return jsonify(
-                    {'status': True, 'msg': 'Details saved successfully', 'data': {'fields': list(request_data.keys())}}
+                    {
+                        'status': True,
+                        'msg': 'Details saved successfully',
+                        'data': {'modified_fields': list(request_data.keys())}
+                    }
                 ), 200
             except ValidationError as err:
                 return jsonify(
