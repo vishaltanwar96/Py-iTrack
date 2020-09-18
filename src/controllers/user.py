@@ -5,7 +5,7 @@ from flask_jwt_extended import (
 )
 
 from models.user import User
-from utils.helpers import get_super_users
+from utils.helpers import super_users_only
 from utils.misc_instances import db
 from serializers.user import (
     UserRegistrationSerializer,
@@ -83,6 +83,7 @@ class UserController(views.MethodView):
                 ), 400
 
     @jwt_required
+    @super_users_only
     def delete(self, user_id=None):
         """Deletes a user"""
 
@@ -91,7 +92,7 @@ class UserController(views.MethodView):
 
         current_user = get_current_user()
 
-        if current_user.id == user_id or current_user.role_id not in get_super_users():
+        if current_user.id == user_id:
             return jsonify({'status': False, 'msg': 'Action not permissible', 'data': None}), 403
 
         user_to_delete = User.query.get(user_id)
