@@ -103,3 +103,19 @@ class OrganisationController(views.MethodView):
             return jsonify(
                 {'status': False, 'msg': 'Validations Failed', 'errors': err.messages, 'data': None}
             ), 400
+
+    def delete(self, org_id=None, *args, **kwargs):
+        """Deletes a user"""
+
+        if not org_id:
+            return jsonify({'status': False, 'msg': 'No Organisation ID specified', 'data': None}), 400
+
+        org = Organisation.query.get(org_id)
+
+        if not org:
+            return jsonify({'status': False, 'msg': 'Invalid Organisation ID, not found', 'data': None}), 404
+
+        db.session.delete(org)
+        db.session.commit()
+
+        return jsonify({'status': False, 'msg': 'Organisation successfully deleted', 'data': {'id': org_id}}), 200
