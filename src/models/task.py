@@ -9,7 +9,7 @@ class Task(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False, unique=True)
-    description = db.Column(db.Text, nullable=True, server_default=null())
+    description = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
     assigned_by = db.Column(db.Integer, db.ForeignKey('user.id'))
