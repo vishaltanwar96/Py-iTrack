@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from marshmallow import Schema, post_load, fields, validate
+from marshmallow import post_load, fields, validate
 
 from models.user import User
 from utils.misc_instances import ma
