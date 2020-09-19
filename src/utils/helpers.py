@@ -2,7 +2,7 @@ from functools import wraps
 from operator import itemgetter
 
 from flask import jsonify
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+from flask_jwt_extended import verify_jwt_in_request, get_current_user
 
 from models import Role, User
 from .misc_instances import db, jwt
@@ -29,7 +29,7 @@ def super_users_only(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
-        if get_jwt_identity() in get_super_users():
+        if get_current_user().role_id in get_super_users():
             return func(*args, **kwargs)
         else:
             return jsonify({'status': False, 'msg': 'Action not permissible', 'data': None}), 403
