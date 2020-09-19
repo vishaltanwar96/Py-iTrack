@@ -9,7 +9,7 @@ class Project(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
-    description = db.Column(db.Text, nullable=True, server_default=null())
+    description = db.Column(db.String(255), nullable=False, server_default='')
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
     status = db.relationship('Status', backref='projects')
     created_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
