@@ -105,7 +105,7 @@ class OrganisationController(views.MethodView):
             ), 400
 
     def delete(self, org_id=None, *args, **kwargs):
-        """Deletes a user"""
+        """Deletes an organisation"""
 
         if not org_id:
             return jsonify({'status': False, 'msg': 'No Organisation ID specified', 'data': None}), 400
