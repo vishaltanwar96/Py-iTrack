@@ -36,6 +36,7 @@ class UserChangeDetailsSerializer(CamelCaseSchema):
         return data
 
 
+# TODO: Find a way to dynamically calculate the count of roles and fill in the max value of Role_id
 class UserRegistrationSerializer(CamelCaseSchema):
     """Validation And De-serialization For User Registration"""
 
