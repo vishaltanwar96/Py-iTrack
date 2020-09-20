@@ -17,7 +17,7 @@ from serializers.user import (
 
 class UserController(views.MethodView):
     """User CRUD Views"""
-
+    # TODO: Add verification email of user
     @verify_json_request
     def post(self, *args, **kwargs):
         """Creates a User (User Registration)"""
@@ -27,9 +27,6 @@ class UserController(views.MethodView):
 
         if User.query.filter_by(email=request_data.get('email')).first():
             return jsonify({'status': False, 'msg': 'User already exists', 'data': None}), 400
-
-        if not Role.query.get(request_data['roleId']):
-            return jsonify({'status': False, 'msg': 'Role doesn\'t exist', 'data': None}), 404
 
         try:
             user = serializer.load(request_data)
