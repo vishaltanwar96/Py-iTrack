@@ -14,6 +14,7 @@ class OrganisationSerializer(ma.SQLAlchemyAutoSchema, CamelCaseSchema):
         """."""
 
         model = Organisation
+        include_fk = True
         exclude = ('passcode',)
 
 
