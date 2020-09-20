@@ -1,7 +1,7 @@
 from functools import wraps
 from operator import itemgetter
 
-from flask import jsonify
+from flask import jsonify, request
 from flask_jwt_extended import verify_jwt_in_request, get_current_user
 
 from models import Role, User
@@ -33,4 +33,15 @@ def super_users_only(func):
             return func(*args, **kwargs)
         else:
             return jsonify({'status': False, 'msg': 'Action not permissible', 'data': None}), 403
+
+    return wrapper
+
+
+def verify_json_request(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not request.is_json:
+            return jsonify({'status': False, 'msg': 'Invalid JSON', 'data': None}), 400
+        return func(*args, **kwargs)
+
     return wrapper
