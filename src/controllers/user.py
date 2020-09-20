@@ -4,8 +4,8 @@ from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt_identity, get_current_user
 )
 
-from models.user import User
-from utils.helpers import super_users_only
+from models import User, Role
+from utils.helpers import super_users_only, verify_json_request
 from utils.misc_instances import db
 from serializers.user import (
     UserRegistrationSerializer,
@@ -18,24 +18,26 @@ from serializers.user import (
 class UserController(views.MethodView):
     """User CRUD Views"""
 
+    @verify_json_request
     def post(self, *args, **kwargs):
         """Creates a User (User Registration)"""
 
-        if request.is_json:
-            serializer = UserRegistrationSerializer()
-            request_data = request.get_json()
+        serializer = UserRegistrationSerializer()
+        request_data = request.get_json()
 
-            if User.query.filter_by(email=request_data.get('email')).first():
-                return jsonify({'status': False, 'msg': 'User already exists', 'data': None}), 400
+        if User.query.filter_by(email=request_data.get('email')).first():
+            return jsonify({'status': False, 'msg': 'User already exists', 'data': None}), 400
 
-            try:
-                user = serializer.load(request_data)
-                db.session.add(user)
-                db.session.commit()
-                return jsonify({'status': True, 'msg': 'Registration Successful', 'data': {'id': user.id}}), 201
-            except ValidationError as err:
-                return jsonify({'status': False, 'msg': 'Validations failed', 'errors': err.messages}), 400
-        return jsonify({'status': False, 'msg': 'Invalid JSON'}), 400
+        if not Role.query.get(request_data['roleId']):
+            return jsonify({'status': False, 'msg': 'Role doesn\'t exist', 'data': None}), 404
+
+        try:
+            user = serializer.load(request_data)
+            db.session.add(user)
+            db.session.commit()
+            return jsonify({'status': True, 'msg': 'Registration Successful', 'data': {'id': user.id}}), 201
+        except ValidationError as err:
+            return jsonify({'status': False, 'msg': 'Validations failed', 'errors': err.messages}), 400
 
     @jwt_required
     def get(self, user_id=None, *args, **kwargs):
@@ -55,32 +57,32 @@ class UserController(views.MethodView):
         return jsonify({'status': False, 'msg': 'Fetched data successfully', 'data': serializer.dump(user)}), 200
 
     @jwt_required
+    @verify_json_request
     def put(self, *args, **kwargs):
         """Change User Information"""
 
-        if request.is_json:
-            user = User.query.filter_by(id=get_jwt_identity())
+        user = User.query.filter_by(id=get_jwt_identity())
 
-            if not user.first():
-                return jsonify({'status': False, 'msg': 'User doesn\'t exist', 'data': None}), 404
+        if not user.first():
+            return jsonify({'status': False, 'msg': 'User doesn\'t exist', 'data': None}), 404
 
-            try:
-                request_data = request.get_json()
-                serializer = UserChangeDetailsSerializer()
-                update_data = serializer.load(request_data)
-                user.update(update_data)
-                db.session.commit()
-                return jsonify(
-                    {
-                        'status': True,
-                        'msg': 'Details saved successfully',
-                        'data': {'modified_fields': list(request_data.keys())}
-                    }
-                ), 200
-            except ValidationError as err:
-                return jsonify(
-                    {'status': False, 'msg': 'Validations Failed', 'errors': err.messages, 'data': None}
-                ), 400
+        try:
+            request_data = request.get_json()
+            serializer = UserChangeDetailsSerializer()
+            update_data = serializer.load(request_data)
+            user.update(update_data)
+            db.session.commit()
+            return jsonify(
+                {
+                    'status': True,
+                    'msg': 'Details saved successfully',
+                    'data': {'modified_fields': list(request_data.keys())}
+                }
+            ), 200
+        except ValidationError as err:
+            return jsonify(
+                {'status': False, 'msg': 'Validations Failed', 'errors': err.messages, 'data': None}
+            ), 400
 
     @jwt_required
     @super_users_only
@@ -109,20 +111,19 @@ class UserController(views.MethodView):
 class UserLoginController(views.MethodView):
     """User Login"""
 
+    @verify_json_request
     def post(self, *args, **kwargs):
         """Handle User Login"""
 
-        if request.is_json:
-            serializer = UserLoginSerializer()
+        serializer = UserLoginSerializer()
 
-            try:
-                user_id = serializer.load(request.get_json())
-                if user_id:
-                    token = create_access_token(identity=user_id)
-                    return jsonify({'status': True, 'msg': 'Login Sucessful', 'data': {'token': token}}), 200
-                return jsonify({'status': False, 'msg': 'Email or password incorrect', 'data': None}), 404
-            except ValidationError as err:
-                return jsonify(
-                    {'status': False, 'msg': 'Validations failed', 'errors': err.messages, 'data': None}
-                ), 400
-        return jsonify({'status': False, 'msg': 'Invalid JSON', 'data': None}), 400
+        try:
+            user_id = serializer.load(request.get_json())
+            if user_id:
+                token = create_access_token(identity=user_id)
+                return jsonify({'status': True, 'msg': 'Login Sucessful', 'data': {'token': token}}), 200
+            return jsonify({'status': False, 'msg': 'Email or password incorrect', 'data': None}), 404
+        except ValidationError as err:
+            return jsonify(
+                {'status': False, 'msg': 'Validations failed', 'errors': err.messages, 'data': None}
+            ), 400
