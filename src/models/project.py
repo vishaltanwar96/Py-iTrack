@@ -17,6 +17,7 @@ class Project(db.Model):
     organisation = db.relationship('Organisation', backref='projects')
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     project_creator = db.relationship('User', backref='projects_created_by')
+    project_users = db.relationship('User', backref='user_projects', secondary='user_project')
 
 
 class ProjectMetrics(db.Model):
