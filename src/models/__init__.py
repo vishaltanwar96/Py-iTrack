@@ -1,4 +1,4 @@
-from .project import Project, ProjectMetrics, ProjectRemarksHistory
+from .project import Project, ProjectRemarksHistory
 from .user import User
 from .task import Task, TaskRemarksHistory
 from .static import Role, Status, Criticality
