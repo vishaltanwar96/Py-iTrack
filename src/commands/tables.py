@@ -10,11 +10,11 @@ from models import Role, Status, Criticality
 tables = Blueprint('tables', __name__)
 
 
-@tables.cli.command('default-value-initializer')
-def table_default_initializer():
+@tables.cli.command('add-seed-data')
+def add_seed_data():
     """Initializes the table with values provided in the initial values attribute"""
 
-    tables_to_init = (Role, Status, Criticality, )
+    tables_to_init = (Role, Status, Criticality,)
 
     for table in tables_to_init:
 
