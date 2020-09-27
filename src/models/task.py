@@ -1,6 +1,7 @@
 from sqlalchemy import null, func, Computed, text
 
 from utils import db
+from .mixins import HistoryMixin
 
 
 class Task(db.Model):
@@ -33,14 +34,10 @@ class Task(db.Model):
     actual_completion_date = db.Column(db.DateTime, server_default=null(), nullable=True)
 
 
-class TaskRemarksHistory(db.Model):
-
+class TaskRemarksHistory(db.Model, HistoryMixin):
     __tablename__ = 'task_history'
 
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
     task = db.relationship('Task', backref='remarks')
-    remarks = db.Column(db.Text, nullable=True, server_default=null())
-    created_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     task_creator = db.relationship('User', backref='tasks_created')
