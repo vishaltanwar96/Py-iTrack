@@ -13,7 +13,7 @@ class Status(db.Model, IdValueMixin):
 
     __tablename__ = 'status'
 
-    initial_values = ('ASSIGNED', 'WIP', 'ONHOLD', 'IN-REVIEW', 'SCHEDULED', 'COMPLETED', 'ABANDONED')
+    initial_values = ('ASSIGNED', 'WIP', 'ONHOLD', 'IN-REVIEW', 'SCHEDULED', 'COMPLETED', 'ABANDONED', 'PLANNED')
 
 
 class Criticality(db.Model, IdValueMixin):
