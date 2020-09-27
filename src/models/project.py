@@ -1,6 +1,7 @@
-from sqlalchemy import func, null
+from sqlalchemy import func
 
 from utils import db
+from .mixins import HistoryMixin
 
 
 class Project(db.Model):
@@ -20,14 +21,10 @@ class Project(db.Model):
     project_users = db.relationship('User', backref='user_projects', secondary='user_project')
 
 
-class ProjectRemarksHistory(db.Model):
-
+class ProjectRemarksHistory(db.Model, HistoryMixin):
     __tablename__ = 'project_history'
 
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     project = db.relationship('Project', backref='remarks')
-    remarks = db.Column(db.Text, nullable=True, server_default=null())
-    created_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref='project_remarks')
