@@ -4,7 +4,8 @@ from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt_identity, get_current_user
 )
 
-from models import User, Role
+from models import User
+from routes import user_bp
 from utils.helpers import super_users_only, verify_json_request
 from utils.misc_instances import db
 from serializers.user import (
@@ -15,14 +16,16 @@ from serializers.user import (
 )
 
 
+@user_bp.route('/')
 class UserController(views.MethodView):
     """User CRUD Views"""
     # TODO: Add verification email of user
     @verify_json_request
+    @user_bp.arguments(UserRegistrationSerializer, location='json')
     def post(self, *args, **kwargs):
         """Creates a User (User Registration)"""
 
-        serializer = UserRegistrationSerializer()
+        serializer = ()
         request_data = request.get_json()
 
         if User.query.filter_by(email=request_data.get('email')).first():

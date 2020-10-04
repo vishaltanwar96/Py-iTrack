@@ -1,11 +1,10 @@
-from marshmallow import fields, validate
+from marshmallow import fields, validate, Schema
 
 from utils import ma
 from models import Organisation
-from utils.serializer import CamelCaseSchema
 
 
-class OrganisationSerializer(ma.SQLAlchemyAutoSchema, CamelCaseSchema):
+class OrganisationSerializer(ma.SQLAlchemyAutoSchema):
     """Serializer for dumping organisation"""
 
     passcode = fields.Str(load_only=True)
@@ -18,7 +17,7 @@ class OrganisationSerializer(ma.SQLAlchemyAutoSchema, CamelCaseSchema):
         exclude = ('passcode',)
 
 
-class OrganisationRegistrationSerializer(CamelCaseSchema):
+class OrganisationRegistrationSerializer(Schema):
     """Schema for registering organisation"""
 
     name = fields.Str(required=True, validate=[validate.Length(min=1, max=70)])
@@ -38,7 +37,7 @@ class OrganisationRegistrationSerializer(CamelCaseSchema):
     location = fields.Str(required=True, validate=[validate.Length(min=1, max=30)])
 
 
-class ChangeOrganisationSerializer(CamelCaseSchema):
+class ChangeOrganisationSerializer(Schema):
     """Schema for changing organisation information"""
 
     name = fields.Str(required=False, validate=[validate.Length(min=1, max=70)])

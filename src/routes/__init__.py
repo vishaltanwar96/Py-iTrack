@@ -1,9 +1,9 @@
-from .user import user
-from .organisation import org
-from .project import project
+from .user import user_bp
+from .organisation import org_bp
+from .project import project_bp
 
-url_prefix_blueprint = {
-    '/api/user': user,
-    '/api/organisation': org,
-    '/api/project': project,
-}
+api_blueprints = [
+    user_bp,
+    org_bp,
+    project_bp,
+]

@@ -4,9 +4,9 @@ from configparser import ConfigParser
 from flask import Flask
 from flask_cors import CORS
 
-from routes import url_prefix_blueprint
+from routes import api_blueprints
 from commands import blueprint_cli_group_mapping
-from utils.misc_instances import db, ma, migrate, jwt
+from utils.misc_instances import db, ma, migrate, jwt, api
 
 
 class Application(object):
@@ -38,12 +38,18 @@ class Application(object):
         ma.init_app(self.app)
         migrate.init_app(self.app, db)
         jwt.init_app(self.app)
+        api.init_app(self.app)
 
         CORS(self.app)
-        self.register_blueprints(url_prefix_blueprint)
-        self.register_blueprints(blueprint_cli_group_mapping)
+        self.register_api_blueprints(api_blueprints)
+        self.register_cli_blueprints(blueprint_cli_group_mapping)
 
-    def register_blueprints(self, blueprint_prefix_dict: dict) -> None:
+    @staticmethod
+    def register_api_blueprints(blps: list) -> None:
+        for blp in blps:
+            api.register_blueprint(blp)
+
+    def register_cli_blueprints(self, blueprint_prefix_dict: dict) -> None:
         for url_prefix, blueprint in blueprint_prefix_dict.items():
             self.app.register_blueprint(blueprint, url_prefix=url_prefix)
 

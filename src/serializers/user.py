@@ -1,13 +1,12 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from marshmallow import post_load, fields, validate
+from marshmallow import post_load, fields, validate, Schema
 
 from models.user import User
 from utils.misc_instances import ma
-from utils.serializer import CamelCaseSchema
 
 
 # Todo: Find a way to change the attributes of a field initialized in parent class(DRY CODE).
-class UserChangeDetailsSerializer(CamelCaseSchema):
+class UserChangeDetailsSerializer(Schema):
     """Serializer to Change User Details"""
 
     first_name = fields.Str(required=False, validate=[validate.Length(min=1, max=50)])
@@ -37,7 +36,7 @@ class UserChangeDetailsSerializer(CamelCaseSchema):
 
 
 # TODO: Find a way to dynamically calculate the count of roles and fill in the max value of Role_id
-class UserRegistrationSerializer(CamelCaseSchema):
+class UserRegistrationSerializer(Schema):
     """Validation And De-serialization For User Registration"""
 
     first_name = fields.Str(required=True, validate=[validate.Length(min=1, max=50)])
@@ -69,7 +68,7 @@ class UserRegistrationSerializer(CamelCaseSchema):
         return User(**data)
 
 
-class UserLoginSerializer(CamelCaseSchema):
+class UserLoginSerializer(Schema):
     """Login Validation and De-serialization"""
 
     email = fields.Email(required=True, validate=validate.Email())
@@ -90,7 +89,7 @@ class UserLoginSerializer(CamelCaseSchema):
         return None
 
 
-class UserSerializer(ma.SQLAlchemyAutoSchema, CamelCaseSchema):
+class UserSerializer(ma.SQLAlchemyAutoSchema):
     """Serializer for User Dumps"""
 
     password = fields.Str(load_only=True)
@@ -100,4 +99,4 @@ class UserSerializer(ma.SQLAlchemyAutoSchema, CamelCaseSchema):
 
         model = User
         include_fk = True
-        exclude = ('password', )
+        exclude = ('password',)

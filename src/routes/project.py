@@ -1,9 +1,5 @@
-from flask import Blueprint
+from flask_smorest import Blueprint
 
-from controllers.project import ProjectController
-
-project = Blueprint('project', __name__)
-
-project_view = ProjectController.as_view('project_crud')
-project.add_url_rule('/', view_func=project_view, methods=('GET', 'POST'))
-project.add_url_rule('/<int:project_id>/', view_func=project_view, methods=('GET', 'PUT', 'DELETE'))
+project_bp = Blueprint(
+    'project', __name__, url_prefix='/api/project', description='CRUD Views on Project Model'
+)
